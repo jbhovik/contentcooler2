@@ -94,7 +94,6 @@ app.post('/api/items', function (req,res) {
             var video_name_array = video_path.split('/');
             var video_name = video_name_array[video_name_array.length - 1];
             var full_path = path.join(__dirname, '../public/movies', video_name);
-            console.log(full_path);
             fs.rename(video_path,  full_path, function (err) {
             if (err) {
                 console.log(err);
@@ -183,8 +182,15 @@ app.delete('/api/items/:item_id', function (req,res) {
 		    res.sendStatus(403);
 		    return;
 		}
-                res.sendStatus(200);
-            });
+        // Remove the file
+        var full_path = path.join(__dirname, '../public/movies', item.video);
+        fs.unlink(full_path, function (err) {
+        if (err) {
+            console.log('Error in delete one movie');
+        }
+        });
+            res.sendStatus(200);
+        });
         } else {
             res.sendStatus(403);
         }

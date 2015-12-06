@@ -184,6 +184,7 @@ var UploadMovieForm = React.createClass({
         ajax.setRequestHeader("Authorization", localStorage.token);
         ajax.setRequestHeader("enctype","multipart/form-data");
         ajax.send(formdata);
+        this.props.reload();
     },
 
     progressHandler: function(event) {
@@ -323,9 +324,8 @@ var List = React.createClass({
         return (
             <section id="todoapp">
             <section id="main">
-            <ListEntry reload={this.reload}/>
             <ListItems items={this.state.items} reload={this.reload}/>
-            <UploadMovieForm/>
+            <UploadMovieForm reload={this.reload}/>
             </section>
             </section>
             );
@@ -524,7 +524,7 @@ var Item = React.createClass({
             <div className="view">
             <input id={this.props.item.id} className="toggle" type="checkbox" onChange={this.toggleCompleted.bind(this,this.props.item)} checked={this.props.item.completed} />
             <label className="check" htmlFor={this.props.item.id}/>
-            <label onDoubleClick={this.editItem}>{this.props.item.title}</label>
+            <label onDoubleClick={this.editItem}>{this.props.item.video}</label>
             <button className="destroy" onClick={this.deleteItem}></button>
             </div>
             <input ref="editField" className="edit" onKeyDown={this.handleKeyDown} onChange={this.changeItem} onSubmit={this.saveItem} onBlur={this.saveItem} value={this.state.editText} />
