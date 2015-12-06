@@ -9,7 +9,8 @@
     "jsonwebtoken": "~5.0.1",
     "bcrypt": "~0.8.3",
     "mongoose": "~4.0.3",
-    "mongoose-findorcreate": "~0.1.2"
+    "mongoose-findorcreate": "~0.1.2",
+    "multiparty": "~4.1.2"
   },
   "devDependencies": {},
   "scripts": {

@@ -9,10 +9,8 @@ var User = require('./user.js');
 // Item schema
 var itemSchema = new Schema({
     user: {type: ObjectId, ref: 'users'},
-    title: String,
+    video: String,
     created: {type: Date, default: Date.now},
-    due: {type: Date, default: Date.now},
-    completed: Boolean,
 });
 
 // ensure schemas use virtual IDs

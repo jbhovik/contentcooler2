@@ -1,6 +1,9 @@
 var app = require('./express.js');
 var User = require('./user.js');
 var Item = require('./item.js');
+var multiparty = require('multiparty');
+var fs = require('fs');
+var path = require("path");
 
 // setup body parser
 var bodyParser = require('body-parser');
@@ -84,15 +87,28 @@ app.post('/api/items', function (req,res) {
     // get indexes
     user = User.verifyToken(req.headers.authorization, function(user) {
         if (user) {
-            // if the token is valid, create the item for the user
-	    Item.create({title:req.body.item.title,completed:false,user:user.id}, function(err,item) {
-		if (err) {
-		    res.sendStatus(403);
-		    return;
-		}
-		res.json({item:item});
-	    });
-        } else {
+            // Parse the movie
+            var form = new multiparty.Form();
+            form.parse(req, function(err, fields, files) {
+            var video_path = String(files.file1[0].path);
+            var video_name_array = video_path.split('/');
+            var video_name = video_name_array[video_name_array.length - 1];
+            var full_path = path.join(__dirname, '../public/movies', video_name);
+            console.log(full_path);
+            fs.rename(video_path,  full_path, function (err) {
+            if (err) {
+                console.log(err);
+            }
+            });
+            Item.create({video:video_name,user:user.id}, function(err, item) {
+            if (err) {
+                res.sendStatus(403);
+                return;
+            }
+            res.json({item:item});
+            });
+            });
+	    } else {
             res.sendStatus(403);
         }
     });

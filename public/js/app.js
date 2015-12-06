@@ -13,8 +13,8 @@ var Redirect = Router.Redirect;
 //   Login
 //   Register
 //   Login
-//     ListHeader
-//     ListEntry
+//   UploadMovieForm
+//   Watch
 //     ListItems
 //       Item
 
@@ -152,6 +152,77 @@ var Login = React.createClass({
     }
 });
 
+// Upload a movie component
+var UploadMovieForm = React.createClass({
+    // context so the component can access the router
+    contextTypes: {
+        router: React.PropTypes.func
+    },
+
+    _: function (el) {
+        return document.getElementById(el);
+    },
+
+    upload: function() {
+        event.preventDefault();
+        event.stopPropagation();
+        var fileInput = this._("file1").files[0];
+
+        if (!fileInput) {
+            return;
+        }
+
+        var formdata = new FormData();
+        formdata.append("file1", fileInput);
+
+        var ajax = new XMLHttpRequest();
+        ajax.upload.addEventListener("progress", this.progressHandler, false);
+        ajax.addEventListener("load", this.completeHandler, false);
+        ajax.addEventListener("error", this.errorHandler, false);
+        ajax.addEventListener("abort", this.abortHandler, false);
+        ajax.open("POST", "/api/items");
+        ajax.setRequestHeader("Authorization", localStorage.token);
+        ajax.setRequestHeader("enctype","multipart/form-data");
+        ajax.send(formdata);
+    },
+
+    progressHandler: function(event) {
+        this._("loaded_n_total").innerHTML = "Uploaded " + event.loaded + " bytes of " + event.total;
+        var percent = (event.loaded / event.total) * 100;
+        this._("progressBar").value = Math.round(percent);
+        this._("status").innerHTML = Math.round(percent) + "% uploaded...please wait";
+    },
+
+    completeHandler: function(event) {
+        this._("status").innerHTML = event.target.responseText;
+        this._("progressBar").value = 0;
+    },
+
+    errorHandler: function (event) {
+        this._("status").innerHTML = "Upload failed";
+    },
+
+    abortHandler: function (event) {
+        this._("status").innerHTML = "Upload aborted";
+    },
+
+    // file form for movie upload
+    render: function() {
+        return (
+            <div>
+            <h1>Upload a movie</h1>
+            <form className="uploadMovieForm" onSubmit={this.upload}>
+            <input id="file1"type="file" name="file1"/>
+            <input className="btn" id="upload1" type="submit" value="Upload" onClick={this.upload}/>
+            <progress id="progressBar" value="0" max="100"></progress>
+            <h3 id="status"></h3>
+            <p id="loaded_n_total"></p>
+            </form>
+            </div>
+            );
+    }
+});
+
 // Register page, shows the registration form and redirects to the list if login is successful
 var Register = React.createClass({
     // context so the component can access the router
@@ -251,10 +322,10 @@ var List = React.createClass({
         var name = auth.getName();
         return (
             <section id="todoapp">
-            <ListHeader name={name} items={this.state.items} reload={this.reload} />
             <section id="main">
             <ListEntry reload={this.reload}/>
             <ListItems items={this.state.items} reload={this.reload}/>
+            <UploadMovieForm/>
             </section>
             </section>
             );
