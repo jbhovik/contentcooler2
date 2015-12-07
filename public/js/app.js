@@ -28,8 +28,7 @@ var App = React.createClass({
     // initial state
     getInitialState: function() {
         return {
-	        // the user is logged in
-            loggedIn: auth.loggedIn()
+            loggedIn: auth.loggedIn(),
         };
     },
 
@@ -63,14 +62,13 @@ var App = React.createClass({
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
             </button>
-            <a className="navbar-brand" href="/">List-o-matic</a>
+            <a className="navbar-brand" href="/">Content Cooler</a>
             </div>
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             {this.state.loggedIn ? (
                 <ul className="nav navbar-nav">
-                <li><a href="#/list">All</a></li>
-                <li><a href="#/list/active">Active</a></li>
-                <li><a href="#/list/completed">Completed</a></li>
+                <li><a href="#/list">Library</a></li>
+                <li><a href="#/movie-player">Movie Player</a></li>
                 <li><a href="#" onClick={this.logout}>Logout</a></li>
                 </ul>
                 ) : (<div></div>)}
@@ -224,6 +222,22 @@ var UploadMovieForm = React.createClass({
     }
 });
 
+// List entry component, handles adding new items to the list
+var MoviePlayer = React.createClass({
+    // context so the component can access the router
+    contextTypes: {
+        router: React.PropTypes.func
+    },
+
+    render: function() {
+        return (
+            <div className="moviePlayer">
+            <h1>Movie Player</h1>
+            </div>
+        );
+    }
+});
+
 // Register page, shows the registration form and redirects to the list if login is successful
 var Register = React.createClass({
     // context so the component can access the router
@@ -292,6 +306,7 @@ var List = React.createClass({
         return {
             // list of items in the todo list
             items: [],
+            currItem: ''
         };
     },
 
@@ -325,7 +340,8 @@ var List = React.createClass({
             <section id="todoapp">
             <section id="main">
             <ListItems items={this.state.items} reload={this.reload}/>
-            <UploadMovieForm reload={this.reload}/>
+            <UploadMovieForm items={this.state.items} reload={this.reload}/>
+            <MoviePlayer currItem={this.state.currItem} item={this.state.items}/>
             </section>
             </section>
             );
@@ -497,6 +513,12 @@ var Item = React.createClass({
             api.deleteItem(this.props.item,this.props.reload);
         }
     },
+
+    // load the movie
+    loadMovie: function (event) {
+        console.log(this.props);
+    },
+
     // called when a key is pressed
     handleKeyDown: function (event) {
         var ESCAPE_KEY = 27;
@@ -522,9 +544,7 @@ var Item = React.createClass({
         return (
             <li className={classes}>
             <div className="view">
-            <input id={this.props.item.id} className="toggle" type="checkbox" onChange={this.toggleCompleted.bind(this,this.props.item)} checked={this.props.item.completed} />
-            <label className="check" htmlFor={this.props.item.id}/>
-            <label onDoubleClick={this.editItem}>{this.props.item.video}</label>
+            <label onDoubleClick={this.loadMovie}>{this.props.item.video}</label>
             <button className="destroy" onClick={this.deleteItem}></button>
             </div>
             <input ref="editField" className="edit" onKeyDown={this.handleKeyDown} onChange={this.changeItem} onSubmit={this.saveItem} onBlur={this.saveItem} value={this.state.editText} />
@@ -725,8 +745,7 @@ var auth = {
 var routes = (
     <Route name="app" path="/" handler={App}>
 	    <Route name="list" path ="/list" handler={List}/>
-	    <Route name="active" path = "/list/active" handler={List}/>
-	    <Route name="completed" path = "/list/completed" handler={List}/>
+	    <Route name="movie-player" path = "/movie-player" handler={MoviePlayer}/>
 	    <Route name="login" handler={Login}/>
 	    <Route name="register" handler={Register}/>
     <DefaultRoute handler={Home}/>
