@@ -24,6 +24,7 @@ app.post('/api/users/register', function (req, res) {
             // if this username is not taken, then create a user record
             user.name = req.body.name;
             user.set_password(req.body.password);
+            user.currMovie = req.body.currMovie;
             user.save(function(err) {
 		if (err) {
 		    res.sendStatus("403");
@@ -40,6 +41,8 @@ app.post('/api/users/register', function (req, res) {
         }
     });
 });
+
+
 
 // login a user
 app.post('/api/users/login', function (req, res) {
@@ -81,6 +84,26 @@ app.get('/api/items', function (req,res) {
     });
 });
 
+// get the one item for user movie playing
+app.get('/api/item/:item_id', function (req,res) {
+    // validate the supplied token
+    user = User.verifyToken(req.headers.authorization, function(user) {
+        if (user) {
+            // if the token is valid, find all the user's items and return them
+        Item.find({user:user.id}, function(err, items) {
+        if (err) {
+            res.sendStatus(403);
+            return;
+        }
+        // return value is the list of items as JSON
+        res.json({items: items});
+        });
+        } else {
+            res.sendStatus(403);
+        }
+    });
+});
+
 // add an item
 app.post('/api/items', function (req,res) {
     // validate the supplied token
@@ -113,25 +136,47 @@ app.post('/api/items', function (req,res) {
     });
 });
 
-// get an item
+// add the currMovie to the user
+app.put('/api/users', function (req,res) {
+    // validate the supplied token
+    user = User.verifyToken(req.headers.authorization, function(user) {
+        if (user) {
+            user.currMovie = req.body.currMovie;
+                user.save(function(err) {
+            if (err) {
+            res.sendStatus(403);
+            return;
+            }
+                    // return value is the item as JSON
+                    res.json({user:user});
+                });
+        } else {
+            res.sendStatus(403);
+        }
+    });
+});
+
+// get user's current movie
+app.get('/api/getCurrMovie', function (req,res) {
+    // validate the supplied token
+    user = User.verifyToken(req.headers.authorization, function(user) {
+        if (user) {
+            var currMovie = user.currMovie;
+            res.json({currMovie:currMovie});
+        } else {
+            res.sendStatus(403);
+        }
+    });
+});
+
+// get an item for playing the movie
 app.get('/api/items/:item_id', function (req,res) {
     // validate the supplied token
     user = User.verifyToken(req.headers.authorization, function(user) {
         if (user) {
-            // if the token is valid, then find the requested item
-            Item.findById(req.params.item_id, function(err, item) {
-		if (err) {
-		    res.sendStatus(403);
-		    return;
-		}
-                // get the item if it belongs to the user, otherwise return an error
-                if (item.user != user) {
-                    res.sendStatus(403);
-		    return;
-                }
-                // return value is the item as JSON
-                res.json({item:item});
-            });
+            // if the token is valid, get the file from the path
+            var full_path = path.join(__dirname, '../public/movies', req.params.item_id);
+            
         } else {
             res.sendStatus(403);
         }

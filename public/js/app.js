@@ -12,9 +12,9 @@ var Redirect = Router.Redirect;
 //   Home
 //   Login
 //   Register
-//   Login
-//   UploadMovieForm
-//   Watch
+//   List
+//     UploadMovieForm
+//     MoviePlayer
 //     ListItems
 //       Item
 
@@ -81,7 +81,7 @@ var App = React.createClass({
             </div>
             );
 
-}
+    }
 });
 
 // Home page, which shows Login and Register buttons
@@ -229,6 +229,47 @@ var MoviePlayer = React.createClass({
         router: React.PropTypes.func
     },
 
+    // initial state
+    getInitialState: function() {
+        return {
+            // user's current movie
+            currMovie: '',
+            item: '',
+        };
+    },
+
+    // when the component loads, get the list items
+    componentDidMount: function() {
+        api.getUserCurrMovie(this.currMovieCB);
+    },
+
+    // callback for getting the list of items, sets the list state
+    currMovieCB: function(status, data) {
+        if (status) {
+            // set the state for the list of items
+            this.setState({
+                currMovie: data.currMovie,
+            });
+            api.getItem(this.state.currMovie, this.getCurrMovieCB);
+        } else {
+            // if the API call fails, print error
+            console.log('Failure in currMovie in MoviePlayer');
+        }
+    },
+
+    // callback for getting the actual movie file
+    getCurrMovieCB: function(status, data) {
+        if (status) {
+            // set the state for the list of items
+            this.setState({
+                item: data.item,
+            });
+        } else {
+            // if the API call fails, print error
+            console.log('Failure in getCurrMovieCB in MoviePlayer');
+        }
+    },
+
     render: function() {
         return (
             <div className="moviePlayer">
@@ -341,7 +382,6 @@ var List = React.createClass({
             <section id="main">
             <ListItems items={this.state.items} reload={this.reload}/>
             <UploadMovieForm items={this.state.items} reload={this.reload}/>
-            <MoviePlayer currItem={this.state.currItem} item={this.state.items}/>
             </section>
             </section>
             );
@@ -463,6 +503,9 @@ var ListItems = React.createClass({
 
 // Item shown in the todo list
 var Item = React.createClass({
+    contextTypes: {
+        router: React.PropTypes.func
+    },
     // initial state
     getInitialState: function () {
         return {
@@ -515,8 +558,21 @@ var Item = React.createClass({
     },
 
     // load the movie
-    loadMovie: function (event) {
-        console.log(this.props);
+    updateUserCurrMovie: function (event) {
+        api.updateUserCurrMovie(this.props.item, this.updateUserCurrMovieCB);
+        this.context.router.transitionTo('/movie-player');
+    },
+
+    // callback for upload success
+    updateUserCurrMovieCB: function(status, res) {
+        if (status) {
+            //console.log("success in updateUserCurrMovieCB");
+            //console.log(res);
+        } 
+        else {
+            console.log('no success in updateUserCurrMovieCB');
+            console.log(res);
+        }
     },
 
     // called when a key is pressed
@@ -544,7 +600,7 @@ var Item = React.createClass({
         return (
             <li className={classes}>
             <div className="view">
-            <label onDoubleClick={this.loadMovie}>{this.props.item.video}</label>
+            <label onDoubleClick={this.updateUserCurrMovie}>{this.props.item.video}</label>
             <button className="destroy" onClick={this.deleteItem}></button>
             </div>
             <input ref="editField" className="edit" onKeyDown={this.handleKeyDown} onChange={this.changeItem} onSubmit={this.saveItem} onBlur={this.saveItem} value={this.state.editText} />
@@ -575,6 +631,29 @@ var api = {
             }
         });
     },
+
+    // get a single item
+    getItem: function(item_id, cb) {
+        console.log('movie id', item_id);
+        var url = "/api/items/" + item_id;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'GET',
+            headers: {'Authorization': localStorage.token},
+            success: function(res) {
+                if (cb)
+                    cb(true, res);
+            },
+            error: function(xhr, status, err) {
+                // if there is an error, remove the login token
+                delete localStorage.token;
+                if (cb)
+                    cb(false, status);
+            }
+        });
+    },
+
     // add an item, call the callback when complete
     addItem: function(title, cb) {
         var url = "/api/items";
@@ -627,6 +706,52 @@ var api = {
             }
         });
     },
+
+    // update an item, call the callback when complete
+    updateUserCurrMovie: function(item, cb) {
+        var url = "/api/users/";
+        $.ajax({
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                username: localStorage.name,
+                currMovie: item.video,
+            }),
+            type: 'PUT',
+            headers: {'Authorization': localStorage.token},
+            success: function(res) {
+                if (cb)
+                    cb(true, res);
+            },
+            error: function(xhr, status, err) {
+                // if there is any error, remove any login token
+                delete localStorage.token;
+                if (cb)
+                    cb(false, status);
+            }
+        });
+    },
+
+    getUserCurrMovie: function(cb) {
+        var url = "/api/getCurrMovie/";
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'GET',
+            headers: {'Authorization': localStorage.token},
+            success: function(res) {
+                if (cb)
+                    cb(true, res);
+            },
+            error: function(xhr, status, err) {
+                // if there is an error, remove the login token
+                delete localStorage.token;
+                if (cb)
+                    cb(false, status);
+            }
+        });
+    },
+
     // delete an item, call the callback when complete
     deleteItem: function(item, cb) {
         var url = "/api/items/" + item.id;
@@ -661,7 +786,8 @@ var auth = {
             data: {
                 name: name,
                 username: username,
-                password: password
+                password: password,
+                currMovie: ''
             },
             // on success, store a login token
             success: function(res) {
