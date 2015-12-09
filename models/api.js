@@ -4,7 +4,9 @@ var Item = require('./item.js');
 var multiparty = require('multiparty');
 var fs = require('fs');
 var path = require("path");
-
+var url = require("url");
+var util = require('util');
+    
 // setup body parser
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -171,16 +173,43 @@ app.get('/api/getCurrMovie', function (req,res) {
 
 // get an item for playing the movie
 app.get('/api/items/:item_id', function (req,res) {
+    console.log('step 1');
     // validate the supplied token
-    user = User.verifyToken(req.headers.authorization, function(user) {
-        if (user) {
+    //user = User.verifyToken(req.headers.authorization, function(user) {
+        console.log('step 2');
+        //if (user) {
+            console.log('step 3');
             // if the token is valid, get the file from the path
             var full_path = path.join(__dirname, '../public/movies', req.params.item_id);
-            
-        } else {
-            res.sendStatus(403);
-        }
-    });
+            console.log(full_path);
+            var stat = fs.statSync(full_path);
+            var total = stat.size;
+            if (req.headers['range']) {
+                console.log('step 4');
+                var range = req.headers.range;
+                var parts = range.replace(/bytes=/, "").split("-");
+                var partialstart = parts[0];
+                var partialend = parts[1];
+
+                var start = parseInt(partialstart, 10);
+                var end = partialend ? parseInt(partialend, 10) : total-1;
+                var chunksize = (end-start)+1;
+                console.log('RANGE: ' + start + ' - ' + end + ' = ' + chunksize);
+
+                var file = fs.createReadStream(full_path, {start: start, end: end});
+                res.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/mp4' });
+                file.pipe(res);
+            } else {
+                console.log('step 5');
+                console.log('ALL: ' + total);
+                res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'video/mp4' });
+                fs.createReadStream(full_path).pipe(res);
+            }
+        // } else {
+        //     console.log('step 6');
+        //     res.sendStatus(403);
+        // }
+    //});
 });
 
 // update an item

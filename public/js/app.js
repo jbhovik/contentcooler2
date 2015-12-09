@@ -250,7 +250,7 @@ var MoviePlayer = React.createClass({
             this.setState({
                 currMovie: data.currMovie,
             });
-            api.getItem(this.state.currMovie, this.getCurrMovieCB);
+            //api.getItem(this.state.currMovie, this.getCurrMovieCB);
         } else {
             // if the API call fails, print error
             console.log('Failure in currMovie in MoviePlayer');
@@ -259,21 +259,30 @@ var MoviePlayer = React.createClass({
 
     // callback for getting the actual movie file
     getCurrMovieCB: function(status, data) {
+        console.log('status in client', status);
         if (status) {
             // set the state for the list of items
             this.setState({
-                item: data.item,
+                item: data,
             });
+            console.log('new movie file state', this.state);
         } else {
             // if the API call fails, print error
             console.log('Failure in getCurrMovieCB in MoviePlayer');
         }
     },
 
+    // toggle controls
+    getCurrMovieCB: function(status, data) {
+        console.log('toggle');
+    },
+
     render: function() {
         return (
             <div className="moviePlayer">
             <h1>Movie Player</h1>
+            <video src='http://localhost:3000/api/items/CuPIg-nplMYyZMYnL0eS-0Qu.mp4'></video>
+            <p onClick={this.toggleControls}>Toggle</p>
             </div>
         );
     }
@@ -634,18 +643,25 @@ var api = {
 
     // get a single item
     getItem: function(item_id, cb) {
-        console.log('movie id', item_id);
         var url = "/api/items/" + item_id;
         $.ajax({
             url: url,
-            dataType: 'json',
+            dataType: 'text',
+            contentType : "application/json",
+            mimeType : "video/mp4",
+            processData : false,
+            crossDomain : true,
             type: 'GET',
-            headers: {'Authorization': localStorage.token},
+            headers: {
+                'Authorization': localStorage.token,
+                'Accept': '*/*',
+            },
             success: function(res) {
                 if (cb)
                     cb(true, res);
             },
             error: function(xhr, status, err) {
+                console.log('Error sucka', err);
                 // if there is an error, remove the login token
                 delete localStorage.token;
                 if (cb)
