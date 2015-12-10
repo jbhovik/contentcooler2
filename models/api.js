@@ -125,7 +125,7 @@ app.post('/api/items', function (req,res) {
                 console.log(err);
             }
             });
-            Item.create({video:video_name,title:file_name,user:user.id}, function(err, item) {
+            Item.create({video:video_name,title:file_name,type:req.headers.type,user:user.id}, function(err, item) {
             if (err) {
                 res.sendStatus(403);
                 return;

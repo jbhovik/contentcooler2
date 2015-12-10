@@ -189,6 +189,7 @@ var UploadMovieForm = React.createClass({
         ajax.open("POST", "/api/items");
         ajax.setRequestHeader("Authorization", localStorage.token);
         ajax.setRequestHeader("enctype","multipart/form-data");
+        ajax.setRequestHeader("type", fileInput.type);
         ajax.send(formdata);
     },
 
@@ -259,7 +260,7 @@ var MoviePlayer = React.createClass({
                 my_url = '';
             }
             else {
-                my_url = 'http://45.55.19.205:3000/api/items/' + data.currMovie
+                my_url = 'http://localhost:3000/api/items/' + data.currMovie
             }
             // set the state for the list of items
             this.setState({
@@ -581,6 +582,7 @@ var Item = React.createClass({
 
     // load the movie
     updateUserCurrMovie: function (event) {
+        localStorage.contentCoolerType = this.props.item.type;
         api.updateUserCurrMovie(this.props.item, this.updateUserCurrMovieCB);
         this.context.router.transitionTo('/movie-player');
     },

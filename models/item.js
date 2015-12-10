@@ -11,6 +11,7 @@ var itemSchema = new Schema({
     user: {type: ObjectId, ref: 'users'},
     video: String,
     title: String,
+    type: String,
     created: {type: Date, default: Date.now},
 });
 
