@@ -7,6 +7,7 @@ var Route = Router.Route;
 var RouteHandler = Router.RouteHandler;
 var Redirect = Router.Redirect;
 
+// Content Cooler: The cooler for your content :)
 // Map of components
 // App
 //   Home
