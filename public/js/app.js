@@ -621,7 +621,7 @@ var Item = React.createClass({
         return (
             <li className={classes}>
             <div className="view">
-            <label onDoubleClick={this.updateUserCurrMovie}>{this.props.item.video}</label>
+            <label onDoubleClick={this.updateUserCurrMovie}>{this.props.item.title}</label>
             <button className="destroy" onClick={this.deleteItem}></button>
             </div>
             <input ref="editField" className="edit" onKeyDown={this.handleKeyDown} onChange={this.changeItem} onSubmit={this.saveItem} onBlur={this.saveItem} value={this.state.editText} />

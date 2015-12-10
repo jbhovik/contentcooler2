@@ -116,6 +116,7 @@ app.post('/api/items', function (req,res) {
             var form = new multiparty.Form();
             form.parse(req, function(err, fields, files) {
             var video_path = String(files.file1[0].path);
+            var file_name = String(files.file1[0].originalFilename);
             var video_name_array = video_path.split('/');
             var video_name = video_name_array[video_name_array.length - 1];
             var full_path = path.join(__dirname, '../public/movies', video_name);
@@ -124,7 +125,7 @@ app.post('/api/items', function (req,res) {
                 console.log(err);
             }
             });
-            Item.create({video:video_name,user:user.id}, function(err, item) {
+            Item.create({video:video_name,title:file_name,user:user.id}, function(err, item) {
             if (err) {
                 res.sendStatus(403);
                 return;

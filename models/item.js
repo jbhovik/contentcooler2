@@ -10,6 +10,7 @@ var User = require('./user.js');
 var itemSchema = new Schema({
     user: {type: ObjectId, ref: 'users'},
     video: String,
+    title: String,
     created: {type: Date, default: Date.now},
 });
 
