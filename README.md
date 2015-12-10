@@ -1,11 +1,17 @@
-# list-o-matic Node.js server using mongodb
+# Content Cooler
 
-A simple list server to demonstrate a REST API that can be called from a front
-end or a third-party application. Uses Node.js and Express, with
-username/password for login, token-based authentication, and mongoose as an
-ORM for mongodb.
+Content Cooler is website where you can store and view your content,
+all protected under your individual login. Movies and music can be enjoyed.
+Your library contains a list of content and an uploader for files.
 
 ## Dependencies
+
+    "jsonwebtoken": "~5.0.1",
+    "bcrypt": "~0.8.3",
+    "multiparty": "~4.1.2",
+    "react": "~0.14.3",
+    "react-global": "~0.1.8"
+
 
 - [Node.js](https://nodejs.org/)
 - [Express](http://expressjs.com/)
@@ -14,6 +20,8 @@ ORM for mongodb.
 - [body-parser](https://github.com/expressjs/body-parser)
 - [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
 - [bcrypt-nodejs](https://github.com/ncb000gt/node.bcrypt.js)
+- [react-global](https://github.com/captivationsoftware/react-global)
+
 
 ## Installation
 

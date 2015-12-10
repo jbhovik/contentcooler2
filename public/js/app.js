@@ -68,8 +68,8 @@ var App = React.createClass({
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             {this.state.loggedIn ? (
                 <ul className="nav navbar-nav">
-                <li><a href="#/list">Movie Library</a></li>
-                <li><a href="#/movie-player">Movie Player</a></li>
+                <li><a href="#/list">Content Library</a></li>
+                <li><a href="#/movie-player">Content Player</a></li>
                 <li><a href="#" onClick={this.logout}>Logout</a></li>
                 </ul>
                 ) : (<div></div>)}
@@ -200,7 +200,7 @@ var UploadMovieForm = React.createClass({
     },
 
     completeHandler: function(event) {
-        this._("status").innerHTML = "Movie uploaded!";
+        this._("status").innerHTML = "Content uploaded!";
         this._("progressBar").value = 0;
         this.props.reload();
     },
@@ -217,7 +217,7 @@ var UploadMovieForm = React.createClass({
     render: function() {
         return (
             <div>
-            <h1>Upload a movie (MP4 movie type supported)</h1>
+            <h1>Upload some content</h1>
             <form className="uploadMovieForm" onSubmit={this.upload}>
             <input id="file1"type="file" name="file1"/>
             <input className="btn" id="upload1" type="submit" value="Upload" onClick={this.upload}/>
@@ -259,8 +259,7 @@ var MoviePlayer = React.createClass({
                 my_url = '';
             }
             else {
-
-                my_url = 'http://45.55.19.205:3000/api/items/' + data.currMovie;
+                my_url = 'http://45.55.19.205:3000/api/items/' + data.currMovie
             }
             // set the state for the list of items
             this.setState({
@@ -288,13 +287,13 @@ var MoviePlayer = React.createClass({
     render: function() {
         var movieHtml;
         if (this.state.currMovie === '') {
-            movieHtml = <h1>Please select a movie from Movie Library</h1>;
+            movieHtml = <h1>Please select a movie from Content Library</h1>;
         } else {
             movieHtml = <video src={this.state.currMovie} controls></video>;
         }
         return (
             <div className="moviePlayer">
-            <h1>Movie Player</h1>
+            <h1>Content Player</h1>
             {movieHtml}
             </div>
         );
@@ -402,7 +401,7 @@ var List = React.createClass({
         return (
             <section id="todoapp">
             <section id="main">
-            <h1>Your Movies (Double-click to view)</h1>
+            <h1>Your Content (Double-click to enjoy)</h1>
             <ListItems items={this.state.items} reload={this.reload}/>
             <UploadMovieForm items={this.state.items} reload={this.reload}/>
             </section>
