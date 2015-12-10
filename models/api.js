@@ -164,6 +164,23 @@ app.get('/api/getCurrMovie', function (req,res) {
     user = User.verifyToken(req.headers.authorization, function(user) {
         if (user) {
             var currMovie = user.currMovie;
+            var full_path = path.join(__dirname, '../public/movies', currMovie);
+
+            try {
+                // Query the entry
+                var stat = fs.statSync(full_path);
+            }
+            catch (e) {
+                currMovie = '';
+                user.currMovie = '';
+                user.save(function(err) {
+                    if (err) {
+                        res.sendStatus(403);
+                    return;
+                    }
+                    // return value is the item as JSON
+                });
+            }
             res.json({currMovie:currMovie});
         } else {
             res.sendStatus(403);
@@ -173,7 +190,6 @@ app.get('/api/getCurrMovie', function (req,res) {
 
 // get an item for playing the movie
 app.get('/api/items/:item_id', function (req,res) {
-    
     // validate the supplied token
     //user = User.verifyToken(req.headers.authorization, function(user) {
        
@@ -182,7 +198,16 @@ app.get('/api/items/:item_id', function (req,res) {
             // if the token is valid, get the file from the path
             var full_path = path.join(__dirname, '../public/movies', req.params.item_id);
             console.log(full_path);
-            var stat = fs.statSync(full_path);
+
+            try {
+                // Query the entry
+                var stat = fs.statSync(full_path);
+            }
+            catch (e) {
+                res.sendStatus(403);
+                return;
+            }
+
             var total = stat.size;
             if (req.headers['range']) {
                 var range = req.headers.range;

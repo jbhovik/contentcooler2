@@ -253,7 +253,13 @@ var MoviePlayer = React.createClass({
     // callback for getting the list of items, sets the list state
     currMovieCB: function(status, data) {
         if (status) {
-            var my_url = 'http://localhost:3000/api/items/' + data.currMovie;
+            var my_url;
+            if (data.currMovie === '') {
+                my_url = '';
+            }
+            else {
+                my_url = 'http://localhost:3000/api/items/' + data.currMovie;
+            }
             // set the state for the list of items
             this.setState({
                 currMovie: my_url,
@@ -278,10 +284,16 @@ var MoviePlayer = React.createClass({
     },
 
     render: function() {
+        var movieHtml;
+        if (this.state.currMovie === '') {
+            movieHtml = <h1>Please select a movie from Movie Library</h1>;
+        } else {
+            movieHtml = <video src={this.state.currMovie} controls></video>;
+        }
         return (
             <div className="moviePlayer">
             <h1>Movie Player</h1>
-            <video src={this.state.currMovie} controls></video>
+            {movieHtml}
             </div>
         );
     }
