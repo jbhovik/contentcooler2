@@ -401,9 +401,9 @@ var List = React.createClass({
         return (
             <section id="todoapp">
             <section id="main">
+            <UploadMovieForm items={this.state.items} reload={this.reload}/>
             <h1>Your Content (Double-click to enjoy)</h1>
             <ListItems items={this.state.items} reload={this.reload}/>
-            <UploadMovieForm items={this.state.items} reload={this.reload}/>
             </section>
             </section>
             );
