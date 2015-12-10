@@ -287,7 +287,7 @@ var MoviePlayer = React.createClass({
     render: function() {
         var movieHtml;
         if (this.state.currMovie === '') {
-            movieHtml = <h1>Please select a movie from Content Library</h1>;
+            movieHtml = <h1>Please select something from Content Library</h1>;
         } else {
             movieHtml = <video src={this.state.currMovie} controls></video>;
         }
