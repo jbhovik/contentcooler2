@@ -260,7 +260,7 @@ var MoviePlayer = React.createClass({
                 my_url = '';
             }
             else {
-                my_url = 'http://localhost:3000/api/items/' + data.currMovie
+                my_url = 'http:/45.55.19.205:3000/api/items/' + data.currMovie
             }
             // set the state for the list of items
             this.setState({
