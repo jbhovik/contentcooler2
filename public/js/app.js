@@ -67,7 +67,7 @@ var App = React.createClass({
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             {this.state.loggedIn ? (
                 <ul className="nav navbar-nav">
-                <li><a href="#/list">Library</a></li>
+                <li><a href="#/list">Movie Library</a></li>
                 <li><a href="#/movie-player">Movie Player</a></li>
                 <li><a href="#" onClick={this.logout}>Logout</a></li>
                 </ul>
@@ -157,6 +157,13 @@ var UploadMovieForm = React.createClass({
         router: React.PropTypes.func
     },
 
+    getInitialState: function() {
+        return {
+            // list of movies
+            items: this.props.items
+        };
+    },
+
     _: function (el) {
         return document.getElementById(el);
     },
@@ -182,7 +189,6 @@ var UploadMovieForm = React.createClass({
         ajax.setRequestHeader("Authorization", localStorage.token);
         ajax.setRequestHeader("enctype","multipart/form-data");
         ajax.send(formdata);
-        this.props.reload();
     },
 
     progressHandler: function(event) {
@@ -193,8 +199,9 @@ var UploadMovieForm = React.createClass({
     },
 
     completeHandler: function(event) {
-        this._("status").innerHTML = event.target.responseText;
+        this._("status").innerHTML = "Movie uploaded!";
         this._("progressBar").value = 0;
+        this.props.reload();
     },
 
     errorHandler: function (event) {
@@ -209,7 +216,7 @@ var UploadMovieForm = React.createClass({
     render: function() {
         return (
             <div>
-            <h1>Upload a movie</h1>
+            <h1>Upload a movie (MP4 movie type supported)</h1>
             <form className="uploadMovieForm" onSubmit={this.upload}>
             <input id="file1"type="file" name="file1"/>
             <input className="btn" id="upload1" type="submit" value="Upload" onClick={this.upload}/>
@@ -251,7 +258,6 @@ var MoviePlayer = React.createClass({
             this.setState({
                 currMovie: my_url,
             });
-            //api.getItem(this.state.currMovie, this.getCurrMovieCB);
         } else {
             // if the API call fails, print error
             console.log('Failure in currMovie in MoviePlayer');
@@ -260,30 +266,22 @@ var MoviePlayer = React.createClass({
 
     // callback for getting the actual movie file
     getCurrMovieCB: function(status, data) {
-        console.log('status in client', status);
         if (status) {
             // set the state for the list of items
             this.setState({
                 item: data,
             });
-            console.log('new movie file state', this.state);
         } else {
             // if the API call fails, print error
             console.log('Failure in getCurrMovieCB in MoviePlayer');
         }
     },
 
-    // toggle controls
-    getCurrMovieCB: function(status, data) {
-        console.log('toggle');
-    },
-
     render: function() {
         return (
             <div className="moviePlayer">
             <h1>Movie Player</h1>
-            <video src={this.state.currMovie}></video>
-            <p onClick={this.toggleControls}>Toggle</p>
+            <video src={this.state.currMovie} controls></video>
             </div>
         );
     }
@@ -390,6 +388,7 @@ var List = React.createClass({
         return (
             <section id="todoapp">
             <section id="main">
+            <h1>Your Movies (Double-click to view)</h1>
             <ListItems items={this.state.items} reload={this.reload}/>
             <UploadMovieForm items={this.state.items} reload={this.reload}/>
             </section>
@@ -662,7 +661,6 @@ var api = {
                     cb(true, res);
             },
             error: function(xhr, status, err) {
-                console.log('Error sucka', err);
                 // if there is an error, remove the login token
                 delete localStorage.token;
                 if (cb)

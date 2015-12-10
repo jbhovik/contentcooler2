@@ -173,19 +173,18 @@ app.get('/api/getCurrMovie', function (req,res) {
 
 // get an item for playing the movie
 app.get('/api/items/:item_id', function (req,res) {
-    console.log('step 1');
+    
     // validate the supplied token
     //user = User.verifyToken(req.headers.authorization, function(user) {
-        console.log('step 2');
+       
         //if (user) {
-            console.log('step 3');
+            
             // if the token is valid, get the file from the path
             var full_path = path.join(__dirname, '../public/movies', req.params.item_id);
             console.log(full_path);
             var stat = fs.statSync(full_path);
             var total = stat.size;
             if (req.headers['range']) {
-                console.log('step 4');
                 var range = req.headers.range;
                 var parts = range.replace(/bytes=/, "").split("-");
                 var partialstart = parts[0];
@@ -200,7 +199,6 @@ app.get('/api/items/:item_id', function (req,res) {
                 res.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/mp4' });
                 file.pipe(res);
             } else {
-                console.log('step 5');
                 console.log('ALL: ' + total);
                 res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'video/mp4' });
                 fs.createReadStream(full_path).pipe(res);
