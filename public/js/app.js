@@ -260,7 +260,7 @@ var MoviePlayer = React.createClass({
                 my_url = '';
             }
             else {
-                my_url = 'http://45.55.19.205:3000/api/items/' + data.currMovie
+                my_url = 'http://44.55.19.205:3000/api/items/' + data.currMovie
             }
             // set the state for the list of items
             this.setState({
@@ -403,7 +403,7 @@ var List = React.createClass({
             <section id="todoapp">
             <section id="main">
             <UploadMovieForm items={this.state.items} reload={this.reload}/>
-            <h1>Your Content (Double-click to enjoy)</h1>
+            <h1>Your Content (Click to enjoy)</h1>
             <ListItems items={this.state.items} reload={this.reload}/>
             </section>
             </section>
@@ -624,7 +624,7 @@ var Item = React.createClass({
         return (
             <li className={classes}>
             <div className="view">
-            <label onDoubleClick={this.updateUserCurrMovie}>{this.props.item.title}</label>
+            <label onClick={this.updateUserCurrMovie}>{this.props.item.title}</label>
             <button className="destroy" onClick={this.deleteItem}></button>
             </div>
             <input ref="editField" className="edit" onKeyDown={this.handleKeyDown} onChange={this.changeItem} onSubmit={this.saveItem} onBlur={this.saveItem} value={this.state.editText} />
