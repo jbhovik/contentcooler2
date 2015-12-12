@@ -381,38 +381,58 @@ var List = React.createClass({
         return {
             // list of items in the todo list
             items: [],
-            currItem: ''
+            currItem: '',
+            filter: 'items'
         };
     },
 
     // when the component loads, get the list items
     componentDidMount: function() {
-        api.getItems(this.listSet, "items");
+        this.loadItems();
     },
 
     // reload the list of items
     reload: function() {
-        api.getItems(this.listSet, "items");
+        api.getItems(this.listSet, this.state.filter);
+    },
+
+    loadItems: function() {
+        this.setState({
+                filter: 'items'
+            });
+        api.getItems(this.listSet, 'items');
     },
 
     // load favorites list
     loadFavorites: function() {
-        api.getItems(this.listSet, "favorites");
+        this.setState({
+                filter: 'favorites'
+            });
+        api.getItems(this.listSet, 'favorites');
     },
 
     // load videos list
     loadVideos: function() {
-        api.getItems(this.listSet, "videos");
+        this.setState({
+                filter: 'videos'
+            });
+        api.getItems(this.listSet, 'videos');
     },
 
     // load audio list
     loadAudios: function() {
-        api.getItems(this.listSet, "audios");
+        this.setState({
+                filter: 'audios'
+            });
+        api.getItems(this.listSet, 'audios');
     },
 
     // load audio list
     loadImages: function() {
-        api.getItems(this.listSet, "images");
+        this.setState({
+                filter: 'images'
+            });
+        api.getItems(this.listSet, 'images');
     },
 
     // callback for getting the list of items, sets the list state
@@ -437,8 +457,8 @@ var List = React.createClass({
             <UploadMovieForm items={this.state.items} reload={this.reload}/>
             <h1>Your Content (Click to enjoy)</h1>
                 <form>
+                    <input className="btn" type="submit" value="All Files" onClick={this.loadItems}/>
                     <input className="btn" type="submit" value="My Favorites" onClick={this.loadFavorites}/>
-                    <input className="btn" type="submit" value="All Files" onClick={this.reload}/>
                     <input className="btn" type="submit" value="Videos" onClick={this.loadVideos}/>
                     <input className="btn" type="submit" value ="Songs" onClick={this.loadAudios}/>
                     <input className="btn" type="submit" value ="Pictures" onClick={this.loadImages}/>
