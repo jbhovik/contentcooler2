@@ -12,6 +12,7 @@ var itemSchema = new Schema({
     video: String,
     title: String,
     type: String,
+    isfavorite: Boolean,
     created: {type: Date, default: Date.now},
 });
 

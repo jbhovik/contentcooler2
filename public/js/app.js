@@ -260,7 +260,7 @@ var MoviePlayer = React.createClass({
                 my_url = '';
             }
             else {
-                my_url = 'http://44.55.19.205:3000/api/items/' + data.currMovie
+                my_url = 'http://localhost:3000/api/items/' + data.currMovie
             }
             // set the state for the list of items
             this.setState({
@@ -387,12 +387,32 @@ var List = React.createClass({
 
     // when the component loads, get the list items
     componentDidMount: function() {
-        api.getItems(this.listSet);
+        api.getItems(this.listSet, "items");
     },
 
     // reload the list of items
     reload: function() {
-        api.getItems(this.listSet);
+        api.getItems(this.listSet, "items");
+    },
+
+    // load favorites list
+    loadFavorites: function() {
+        api.getItems(this.listSet, "favorites");
+    },
+
+    // load videos list
+    loadVideos: function() {
+        api.getItems(this.listSet, "videos");
+    },
+
+    // load audio list
+    loadAudios: function() {
+        api.getItems(this.listSet, "audios");
+    },
+
+    // load audio list
+    loadImages: function() {
+        api.getItems(this.listSet, "images");
     },
 
     // callback for getting the list of items, sets the list state
@@ -416,55 +436,16 @@ var List = React.createClass({
             <section id="main">
             <UploadMovieForm items={this.state.items} reload={this.reload}/>
             <h1>Your Content (Click to enjoy)</h1>
+                <form>
+                    <input className="btn" type="submit" value="My Favorites" onClick={this.loadFavorites}/>
+                    <input className="btn" type="submit" value="All Files" onClick={this.reload}/>
+                    <input className="btn" type="submit" value="Videos" onClick={this.loadVideos}/>
+                    <input className="btn" type="submit" value ="Songs" onClick={this.loadAudios}/>
+                    <input className="btn" type="submit" value ="Pictures" onClick={this.loadImages}/>
+                </form>
             <ListItems items={this.state.items} reload={this.reload}/>
             </section>
             </section>
-            );
-    }
-});
-
-// List header, which shows who the list is for, the number of items in the list, and a button to clear completed items
-var ListHeader = React.createClass({
-    // handle the clear completed button submit    
-    clearCompleted: function (event) {
-        // loop through the items, and delete any that are complete
-        this.props.items.forEach(function(item) {
-            if (item.completed) {
-                api.deleteItem(item, null);
-            }
-        });
-        // XXX race condition because the API call to delete is async
-        // reload the list
-        this.props.reload();
-    },
-
-    // render the list header
-    render: function() {
-        // true if there are any completed items
-        var completed = this.props.items.filter(function(item) {
-            return item.completed;
-        });
-        return (
-            <header id="header">
-            <div className="row">
-            <div className="col-md-6">
-            <p><i>Lovingly created for {this.props.name}</i></p>
-            <p>
-            <span id="list-count" className="label label-default">
-            <strong>{this.props.items.length}</strong> item(s)
-            </span>
-            </p>
-            <p><i>Double-click to edit an item</i></p>
-            </div>
-            {completed.length > 0 ? (
-                <div className="col-md-6 right">
-                <button className="btn btn-warning btn-md" id="clear-completed" onClick={this.clearCompleted}>Clear completed ({completed.length})
-
-                </button>
-                </div>
-                ) : null }
-            </div>
-            </header>
             );
     }
 });
@@ -560,8 +541,18 @@ var Item = React.createClass({
     },
     // when the item is completed, toggle its state and update it
     toggleCompleted: function() {
-        this.props.item.completed = !this.props.item.completed;
+        console.log("in toggle");
+        if (this.props.item.isfavorite)
+            console.log("favorite");
+        else
+            console.log("not favorite");
+        this.props.item.isfavorite = !this.props.item.isfavorite;
         api.updateItem(this.props.item, this.props.reload);
+
+        if (this.props.item.isfavorite)
+            console.log("favorite");
+        else
+            console.log("not favorite");
     },
     // called when the delete button is clicked for this item
     deleteItem: function() {
@@ -627,8 +618,8 @@ var Item = React.createClass({
     render: function() {
         // construct a list of classes for the item CSS
         var classes = "";
-        if (this.props.item.completed) {
-            classes += 'completed';
+        if (this.props.item.isfavorite) {
+            classes += 'isfavorite';
         }
         if (this.state.editing) {
             classes += ' editing';
@@ -636,6 +627,8 @@ var Item = React.createClass({
         return (
             <li className={classes}>
             <div className="view">
+            <input id={this.props.item.id} className="toggle" type="checkbox" onChange={this.toggleCompleted.bind(this,this.props.item)} checked={this.props.item.isfavorite} />
+            <label className="check" htmlFor={this.props.item.id}/>
             <label onClick={this.updateUserCurrMovie}>{this.props.item.title}</label>
             <button className="destroy" onClick={this.deleteItem}></button>
             </div>
@@ -648,8 +641,8 @@ var Item = React.createClass({
 // API object
 var api = {
     // get the list of items, call the callback when complete
-    getItems: function(cb) {
-        var url = "/api/items";
+    getItems: function(cb, type) {
+        var url = "/api/" + type;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -731,7 +724,7 @@ var api = {
             data: JSON.stringify({
                 item: {
                     title: item.title,
-                    completed: item.completed
+                    isfavorite: item.isfavorite
                 }
             }),
             type: 'PUT',

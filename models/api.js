@@ -77,9 +77,103 @@ app.get('/api/items', function (req,res) {
 		    res.sendStatus(403);
 		    return;
 		}
+        console.log("get items");
 		// return value is the list of items as JSON
 		res.json({items: items});
 	    });
+        } else {
+            res.sendStatus(403);
+        }
+    });
+});
+
+// get favorite items for the user
+app.get('/api/favorites', function (req,res) {
+    // validate the supplied token
+    user = User.verifyToken(req.headers.authorization, function(user) {
+        if (user) {
+            // if the token is valid, find all the user's items and return them
+        Item.find({user:user.id}, function(err, items) {
+        if (err) {
+            res.sendStatus(403);
+            return;
+        }
+        // return value is the list of items as JSON
+        var favorites = items.filter (function(item) {return item.isfavorite});
+        res.json({items: favorites});
+        });
+        } else {
+            res.sendStatus(403);
+        }
+    });
+});
+
+// get video items for the user
+app.get('/api/videos', function (req,res) {
+    // validate the supplied token
+    user = User.verifyToken(req.headers.authorization, function(user) {
+        if (user) {
+            // if the token is valid, find all the user's items and return them
+        Item.find({user:user.id}, function(err, items) {
+        if (err) {
+            res.sendStatus(403);
+            return;
+        }
+        // return value is the list of items as JSON
+        var videos = items.filter (function(item) {
+            if(item.type.indexOf("video") != -1)
+                return true;
+        });
+        res.json({items: videos});
+        });
+        } else {
+            res.sendStatus(403);
+        }
+    });
+});
+
+// get video items for the user
+app.get('/api/audios', function (req,res) {
+    // validate the supplied token
+    user = User.verifyToken(req.headers.authorization, function(user) {
+        if (user) {
+            // if the token is valid, find all the user's items and return them
+        Item.find({user:user.id}, function(err, items) {
+        if (err) {
+            res.sendStatus(403);
+            return;
+        }
+        // return value is the list of items as JSON
+        var videos = items.filter (function(item) {
+            if(item.type.indexOf("audio") != -1)
+                return true;
+        });
+        res.json({items: videos});
+        });
+        } else {
+            res.sendStatus(403);
+        }
+    });
+});
+
+// get video items for the user
+app.get('/api/images', function (req,res) {
+    // validate the supplied token
+    user = User.verifyToken(req.headers.authorization, function(user) {
+        if (user) {
+            // if the token is valid, find all the user's items and return them
+        Item.find({user:user.id}, function(err, items) {
+        if (err) {
+            res.sendStatus(403);
+            return;
+        }
+        // return value is the list of items as JSON
+        var videos = items.filter (function(item) {
+            if(item.type.indexOf("image") != -1)
+                return true;
+        });
+        res.json({items: videos});
+        });
         } else {
             res.sendStatus(403);
         }
@@ -125,7 +219,7 @@ app.post('/api/items', function (req,res) {
                 console.log(err);
             }
             });
-            Item.create({video:video_name,title:file_name,type:req.headers.type,user:user.id}, function(err, item) {
+            Item.create({video:video_name,title:file_name,type:req.headers.type,isfavorite:false,user:user.id}, function(err, item) {
             if (err) {
                 res.sendStatus(403);
                 return;
@@ -243,26 +337,26 @@ app.put('/api/items/:item_id', function (req,res) {
         if (user) {
             // if the token is valid, then find the requested item
             Item.findById(req.params.item_id, function(err,item) {
-		if (err) {
-		    res.sendStatus(403);
-		    return;
-		}
+        		if (err) {
+                    res.sendStatus(403);
+                    return;
+        		}
                 // update the item if it belongs to the user, otherwise return an error
                 if (item.user != user.id) {
                     res.sendStatus(403);
-		    return;
+                    return;
                 }
                 item.title = req.body.item.title;
-                item.completed = req.body.item.completed;
+                item.isfavorite = req.body.item.isfavorite;
                 item.save(function(err) {
-		    if (err) {
-			res.sendStatus(403);
-			return;
-		    }
+        		    if (err) {
+            			res.sendStatus(403);
+            			return;
+        		    }
                     // return value is the item as JSON
                     res.json({item:item});
                 });
-	    });
+    	    });
         } else {
             res.sendStatus(403);
         }
