@@ -169,7 +169,7 @@ var UploadMovieForm = React.createClass({
         return document.getElementById(el);
     },
 
-    upload: function() {
+    upload: function(event) {
         event.preventDefault();
         event.stopPropagation();
         var fileInput = this._("file1").files[0];
@@ -290,7 +290,19 @@ var MoviePlayer = React.createClass({
         if (this.state.currMovie === '') {
             movieHtml = <h1>Please select something from Content Library</h1>;
         } else {
-            movieHtml = <video src={this.state.currMovie} controls></video>;
+            fileType = localStorage.contentCoolerType;
+            if (fileType.indexOf("video") != -1) {
+                movieHtml = <video src={this.state.currMovie} controls></video>;
+            }
+            else if (fileType.indexOf("audio") != -1) {
+                movieHtml = <audio src={this.state.currMovie} controls></audio>;
+            }
+            else if (fileType.indexOf("image") != -1) {
+                movieHtml = <img src={this.state.currMovie}></img>;
+            }
+            else {
+                movieHtml = <p>Unknown file type</p>;
+            }
         }
         return (
             <div className="moviePlayer">
