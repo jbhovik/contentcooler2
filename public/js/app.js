@@ -242,11 +242,11 @@ var MoviePlayer = React.createClass({
         } else {
             fileType = localStorage.contentCoolerType;
             if (fileType.indexOf("video") != -1) {
-                movieHtml = <video src={this.state.currMovie} controls></video>;
+                movieHtml = <video width="640" height="480" src={this.state.currMovie} controls></video>;
             } else if (fileType.indexOf("audio") != -1) {
                 movieHtml = <audio src={this.state.currMovie} controls></audio>;
             } else if (fileType.indexOf("image") != -1) {
-                movieHtml = <img src={this.state.currMovie}></img>;
+                movieHtml = <img width="640" height="480" src={this.state.currMovie}></img>;
             } else {
                 movieHtml = <p>Unknown file type</p>;
             }
