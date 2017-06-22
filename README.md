@@ -1,8 +1,8 @@
 # Content Cooler
 
-Content Cooler is website where you can store and view your content,
-all protected under your individual login. Movies and music can be enjoyed.
-Your library contains a list of content and an uploader for files.
+Content Cooler is web app where you can store and view your content,
+all protected under your individual login. Movies, music, and pictures can be enjoyed.
+Your library contains a list of content and an uploader for files, as well as a favorites list.
 
 ## Dependencies
 

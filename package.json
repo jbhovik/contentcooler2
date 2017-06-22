@@ -1,7 +1,7 @@
 {
-  "name": "listomatic-node-mongo",
+  "name": "contentcooler-node-mongo",
   "version": "0.0.0",
-  "description": "listomatic node server with mongo storage",
+  "description": "Media content node server with mongo storage",
   "main": "app.js",
   "dependencies": {
     "express": "~4.12.4",
@@ -18,6 +18,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Daniel Zappala",
+  "author": "Joseph Hovik",
   "license": "GPL"
 }
