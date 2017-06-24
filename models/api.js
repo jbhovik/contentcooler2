@@ -204,30 +204,6 @@ app.put('/api/users', function (req,res) {
     });
 });
 
-app.get('/api/getCurrMovie', function (req,res) {
-    user = User.verifyToken(req.headers.authorization, function(user) {
-        if (user) {
-            var currMovie = user.currMovie;
-            var full_path = path.join(__dirname, '../public/movies', currMovie);
-            try {
-                var stat = fs.statSync(full_path);
-            } catch (e) {
-                currMovie = '';
-                user.currMovie = '';
-                user.save(function(err) {
-                    if (err) {
-                        res.sendStatus(403);
-                        return;
-                    }
-                });
-            }
-            res.json({currMovie:currMovie});
-        } else {
-            res.sendStatus(403);
-        }
-    });
-});
-
 app.get('/api/items/:item_id', function (req,res) {
     var full_path = path.join(__dirname, '../public/movies', req.params.item_id)
     try {

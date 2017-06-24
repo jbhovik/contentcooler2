@@ -55,7 +55,7 @@ var App = React.createClass({
                     </div>
                 </nav>
                 <div className="container">
-                <RouteHandler/>
+                    <RouteHandler/>
                 </div>
             </div>
         );
@@ -206,33 +206,11 @@ var MoviePlayer = React.createClass({
     },
 
     componentDidMount: function() {
-        api.getUserCurrMovie(this.currMovieCB);
-    },
-
-    currMovieCB: function(status, data) {
-        if (status) {
-            var my_url;
-            if (data.currMovie === '') {
-                my_url = '';
-            } else {
-                my_url = 'http://localhost:3000/api/items/' + data.currMovie
-            }
-            this.setState({
-                currMovie: my_url,
-            });
-        } else {
-            console.log('Failure in currMovie in MoviePlayer');
-        }
-    },
-
-    getCurrMovieCB: function(status, data) {
-        if (status) {
-            this.setState({
-                item: data,
-            });
-        } else {
-            console.log('Failure in getCurrMovieCB in MoviePlayer');
-        }
+        var fileName = localStorage.currentMediaFileUrl;
+        var fileUrl =  fileName === undefined? '' : 'http://localhost:3000/api/items/' + fileName;
+        this.setState({
+            currMovie: fileUrl
+        });
     },
 
     render: function() {
@@ -500,18 +478,8 @@ var Item = React.createClass({
 
     updateUserCurrMovie: function (event) {
         localStorage.contentCoolerType = this.props.item.type;
-        api.updateUserCurrMovie(this.props.item, this.updateUserCurrMovieCB);
+        localStorage.currentMediaFileUrl = this.props.item.video;
         this.context.router.transitionTo('/movie-player');
-    },
-
-    updateUserCurrMovieCB: function(status, res) {
-        if (status) {
-            console.log("success in updateUserCurrMovieCB");
-            console.log(res);
-        } else {
-            console.log('no success in updateUserCurrMovieCB');
-            console.log(res);
-        }
     },
 
     handleKeyDown: function (event) {
@@ -641,48 +609,6 @@ var api = {
         });
     },
 
-    updateUserCurrMovie: function(item, cb) {
-        var url = "/api/users/";
-        $.ajax({
-            url: url,
-            contentType: 'application/json',
-            data: JSON.stringify({
-                username: localStorage.name,
-                currMovie: item.video,
-            }),
-            type: 'PUT',
-            headers: {'Authorization': localStorage.token},
-            success: function(res) {
-                if (cb)
-                    cb(true, res);
-            },
-            error: function(xhr, status, err) {
-                delete localStorage.token;
-                if (cb)
-                    cb(false, status);
-            }
-        });
-    },
-
-    getUserCurrMovie: function(cb) {
-        var url = "/api/getCurrMovie/";
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'GET',
-            headers: {'Authorization': localStorage.token},
-            success: function(res) {
-                if (cb)
-                    cb(true, res);
-            },
-            error: function(xhr, status, err) {
-                delete localStorage.token;
-                if (cb)
-                    cb(false, status);
-            }
-        });
-    },
-
     deleteItem: function(item, cb) {
         var url = "/api/items/" + item.id;
         $.ajax({
@@ -775,6 +701,7 @@ var auth = {
 
     logout: function(cb) {
         delete localStorage.token;
+        delete localStorage.currentMediaFileUrl;
         if (cb) cb();
         this.onChange(false);
     },

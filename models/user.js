@@ -8,7 +8,6 @@ var SECRET = '\x1f\x1e1\x8a\x8djO\x9e\xe4\xcb\x9d`\x13\x02\xfb+\xbb\x89q"F\x8a\x
 var userSchema = new Schema({
     name: String,
     username: {type: String, index: true, unique: true},
-    currMovie: String,
     password_hash: String,
 });
 
