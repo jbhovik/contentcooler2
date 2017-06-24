@@ -478,7 +478,7 @@ var Item = React.createClass({
 
     updateUserCurrMovie: function (event) {
         localStorage.contentCoolerType = this.props.item.type;
-        localStorage.currentMediaFileUrl = this.props.item.video;
+        localStorage.currentMediaFileUrl = this.props.item.filename;
         this.context.router.transitionTo('/movie-player');
     },
 

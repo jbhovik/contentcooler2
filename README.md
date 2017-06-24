@@ -39,3 +39,11 @@ node app.js
 
 This will start a server on the supplied host, which you can visit at http://hostname:3000/
 
+## To drop all mongo databases
+
+```
+mongo dropall.js
+```
+
+This will drop all databases in mongo if you change a schema
+

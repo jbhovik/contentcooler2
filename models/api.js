@@ -163,17 +163,17 @@ app.post('/api/items', function (req,res) {
             // Parse the movie
             var form = new multiparty.Form();
             form.parse(req, function(err, fields, files) {
-                var video_path = String(files.file1[0].path);
-                var file_name = String(files.file1[0].originalFilename);
-                var video_name_array = video_path.split('/');
-                var video_name = video_name_array[video_name_array.length - 1];
-                var full_path = path.join(__dirname, '../public/movies', video_name);
-                fs.rename(video_path,  full_path, function (err) {
+                var file_path = String(files.file1[0].path);
+                var title_name = String(files.file1[0].originalFilename);
+                var file_name_array = file_path.split('/');
+                var file_name = file_name_array[file_name_array.length - 1];
+                var full_path = path.join(__dirname, '../public/movies', file_name);
+                fs.rename(file_path,  full_path, function (err) {
                     if (err) {
                         console.log(err);
                     }
                 });
-                Item.create({video:video_name,title:file_name,type:req.headers.type,isfavorite:false,user:user.id}, function(err, item) {
+                Item.create({filename:file_name,title:title_name,type:req.headers.type,isfavorite:false,tester:true,user:user.id}, function(err, item) {
                     if (err) {
                         res.sendStatus(403);
                         return;
@@ -266,7 +266,7 @@ app.delete('/api/items/:item_id', function (req,res) {
 		            res.sendStatus(403);
 		            return;
 		        }
-                var full_path = path.join(__dirname, '../public/movies', item.video);
+                var full_path = path.join(__dirname, '../public/movies', item.filename);
                 fs.unlink(full_path, function (err) {
                     if (err) {
                         console.log('Error in delete one movie');

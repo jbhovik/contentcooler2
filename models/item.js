@@ -5,10 +5,10 @@ var findOrCreate = require('mongoose-findorcreate')
 var User = require('./user.js');
 var itemSchema = new Schema({
     user: {type: ObjectId, ref: 'users'},
-    video: String,
     title: String,
     type: String,
     isfavorite: Boolean,
+    filename: String,
     created: {type: Date, default: Date.now},
 });
 
