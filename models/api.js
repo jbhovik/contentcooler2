@@ -6,7 +6,6 @@ var fs = require('fs');
 var path = require("path");
 var url = require("url");
 var util = require('util');
-    
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -167,7 +166,7 @@ app.post('/api/items', function (req,res) {
                 var title_name = String(files.file1[0].originalFilename);
                 var file_name_array = file_path.split('/');
                 var file_name = file_name_array[file_name_array.length - 1];
-                var full_path = path.join(__dirname, '../public/movies', file_name);
+                var full_path = path.join(__dirname, '../public/files', file_name);
                 fs.rename(file_path,  full_path, function (err) {
                     if (err) {
                         console.log(err);
@@ -205,7 +204,7 @@ app.put('/api/users', function (req,res) {
 });
 
 app.get('/api/items/:item_id', function (req,res) {
-    var full_path = path.join(__dirname, '../public/movies', req.params.item_id)
+    var full_path = path.join(__dirname, '../public/files', req.params.item_id)
     try {
         var stat = fs.statSync(full_path);
     } catch (e) {
@@ -266,7 +265,7 @@ app.delete('/api/items/:item_id', function (req,res) {
 		            res.sendStatus(403);
 		            return;
 		        }
-                var full_path = path.join(__dirname, '../public/movies', item.filename);
+                var full_path = path.join(__dirname, '../public/files', item.filename);
                 fs.unlink(full_path, function (err) {
                     if (err) {
                         console.log('Error in delete one movie');

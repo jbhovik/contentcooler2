@@ -200,7 +200,7 @@ var MoviePlayer = React.createClass({
 
     getInitialState: function() {
         return {
-            currMovie: '',
+            currFile: '',
             item: '',
         };
     },
@@ -209,22 +209,22 @@ var MoviePlayer = React.createClass({
         var fileName = localStorage.currentMediaFileUrl;
         var fileUrl =  fileName === undefined? '' : 'http://localhost:3000/api/items/' + fileName;
         this.setState({
-            currMovie: fileUrl
+            currFile: fileUrl
         });
     },
 
     render: function() {
         var movieHtml;
-        if (this.state.currMovie === '') {
+        if (this.state.currFile === '') {
             movieHtml = <h1>Please select something from Content Library</h1>;
         } else {
             fileType = localStorage.contentCoolerType;
             if (fileType.indexOf("video") != -1) {
-                movieHtml = <video width="640" height="480" src={this.state.currMovie} controls></video>;
+                movieHtml = <video width="640" height="480" src={this.state.currFile} controls></video>;
             } else if (fileType.indexOf("audio") != -1) {
-                movieHtml = <audio src={this.state.currMovie} controls></audio>;
+                movieHtml = <audio src={this.state.currFile} controls></audio>;
             } else if (fileType.indexOf("image") != -1) {
-                movieHtml = <img width="640" height="480" src={this.state.currMovie}></img>;
+                movieHtml = <img width="640" height="480" src={this.state.currFile}></img>;
             } else {
                 movieHtml = <p>Unknown file type</p>;
             }
@@ -476,7 +476,7 @@ var Item = React.createClass({
         }
     },
 
-    updateUserCurrMovie: function (event) {
+    playCurrFile: function (event) {
         localStorage.contentCoolerType = this.props.item.type;
         localStorage.currentMediaFileUrl = this.props.item.filename;
         this.context.router.transitionTo('/movie-player');
@@ -505,7 +505,7 @@ var Item = React.createClass({
                 <div className="view">
                     <input id={this.props.item.id} className="toggle" type="checkbox" onChange={this.toggleCompleted.bind(this,this.props.item)} checked={this.props.item.isfavorite} />
                     <label className="check" htmlFor={this.props.item.id}/>
-                    <label onClick={this.updateUserCurrMovie}>{this.props.item.title}</label>
+                    <label onClick={this.playCurrFile}>{this.props.item.title}</label>
                     <button className="destroy" onClick={this.deleteItem}></button>
                 </div>
                 <input ref="editField" className="edit" onKeyDown={this.handleKeyDown} onChange={this.changeItem} onSubmit={this.saveItem} onBlur={this.saveItem} value={this.state.editText} />
@@ -639,7 +639,7 @@ var auth = {
                 name: name,
                 username: username,
                 password: password,
-                currMovie: ''
+                currFile: ''
             },
             success: function(res) {
                 localStorage.token = res.token;
