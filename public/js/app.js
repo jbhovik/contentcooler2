@@ -183,8 +183,8 @@ var UploadMovieForm = React.createClass({
                 <h1>Upload some content</h1>
                 <form className="uploadMovieForm" onSubmit={this.upload}>
                     <input id="file1"type="file" name="file1"/>
-                    <input className="btn" id="upload1" type="submit" value="Upload" onClick={this.upload}/>
-                    <progress id="progressBar" value="0" max="100"></progress>
+                    <input className="btn-default" id="upload1" type="submit" value="Upload" onClick={this.upload}/>
+                    <progress className="progress-bar-info" id="progressBar" value="0" max="100"></progress>
                     <h3 id="status"></h3>
                     <p id="loaded_n_total"></p>
                 </form>
@@ -359,11 +359,11 @@ var List = React.createClass({
                     <UploadMovieForm items={this.state.items} reload={this.reload}/>
                     <h1>Your Content (Click to enjoy)</h1>
                     <form>
-                        <input className="btn" type="submit" value="All Files" onClick={this.loadItems}/>
-                        <input className="btn" type="submit" value="My Favorites" onClick={this.loadFavorites}/>
-                        <input className="btn" type="submit" value="Videos" onClick={this.loadVideos}/>
-                        <input className="btn" type="submit" value ="Songs" onClick={this.loadAudios}/>
-                        <input className="btn" type="submit" value ="Pictures" onClick={this.loadImages}/>
+                        <input className="btn-primary" type="submit" value="All Files" onClick={this.loadItems}/>
+                        <input className="btn-primary" type="submit" value="My Favorites" onClick={this.loadFavorites}/>
+                        <input className="btn-primary" type="submit" value="Videos" onClick={this.loadVideos}/>
+                        <input className="btn-primary" type="submit" value ="Songs" onClick={this.loadAudios}/>
+                        <input className="btn-primary" type="submit" value ="Pictures" onClick={this.loadImages}/>
                     </form>
                     <ListItems items={this.state.items} reload={this.reload}/>
                 </section>
