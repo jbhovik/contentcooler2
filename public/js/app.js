@@ -32,7 +32,7 @@ var App = React.createClass({
     render: function() {
         return (
             <div>
-                <nav className="navbar navbar-default" role="navigation">
+                <nav className="navbar navbar-inverse" role="navigation">
                     <div className="container">
                         <div className="navbar-header">
                             <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -306,35 +306,40 @@ var List = React.createClass({
         api.getItems(this.listSet, this.state.filter);
     },
 
-    loadItems: function() {
+    loadItems: function(event) {
+        event.preventDefault();
         this.setState({
                 filter: 'items'
             });
         api.getItems(this.listSet, 'items');
     },
 
-    loadFavorites: function() {
+    loadFavorites: function(event) {
+        event.preventDefault();
         this.setState({
                 filter: 'favorites'
             });
         api.getItems(this.listSet, 'favorites');
     },
 
-    loadVideos: function() {
+    loadVideos: function(event) {
+        event.preventDefault();
         this.setState({
                 filter: 'videos'
             });
         api.getItems(this.listSet, 'videos');
     },
 
-    loadAudios: function() {
+    loadAudios: function(event) {
+        event.preventDefault();
         this.setState({
                 filter: 'audios'
             });
         api.getItems(this.listSet, 'audios');
     },
 
-    loadImages: function() {
+    loadImages: function(event) {
+        event.preventDefault();
         this.setState({
                 filter: 'images'
             });
@@ -359,11 +364,11 @@ var List = React.createClass({
                     <UploadMovieForm items={this.state.items} reload={this.reload}/>
                     <h1>Your Content (Click to enjoy)</h1>
                     <form>
-                        <input className="btn-primary" type="submit" value="All Files" onClick={this.loadItems}/>
-                        <input className="btn-primary" type="submit" value="My Favorites" onClick={this.loadFavorites}/>
-                        <input className="btn-primary" type="submit" value="Videos" onClick={this.loadVideos}/>
-                        <input className="btn-primary" type="submit" value ="Songs" onClick={this.loadAudios}/>
-                        <input className="btn-primary" type="submit" value ="Pictures" onClick={this.loadImages}/>
+                        <input className="btn-danger" type="submit" value="All Files" onClick={this.loadItems}/>
+                        <input className="btn-danger" type="submit" value="My Favorites" onClick={this.loadFavorites}/>
+                        <input className="btn-danger" type="submit" value="Videos" onClick={this.loadVideos}/>
+                        <input className="btn-danger" type="submit" value ="Songs" onClick={this.loadAudios}/>
+                        <input className="btn-danger" type="submit" value ="Pictures" onClick={this.loadImages}/>
                     </form>
                     <ListItems items={this.state.items} reload={this.reload}/>
                 </section>
