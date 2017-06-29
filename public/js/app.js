@@ -372,28 +372,6 @@ var List = React.createClass({
     }
 });
 
-var ListEntry = React.createClass({
-    addItem: function(event) {
-        event.preventDefault();
-        var title = this.refs.title.getDOMNode().value;
-        if (!title) {
-            return;
-        }
-        api.addItem(title, this.props.reload);
-        this.refs.title.getDOMNode().value = '';
-    },
-
-    render: function() {
-        return (
-            <header id="input">
-                <form id="item-form" name="itemForm" onSubmit={this.addItem}>
-                    <input type="text" id="new-item" ref="title" placeholder="Enter a new item" autoFocus={true} />
-                </form>
-            </header>
-        );
-    }
-});
-
 var ListItems = React.createClass({
     contextTypes: {
         router: React.PropTypes.func
